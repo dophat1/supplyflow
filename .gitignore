@@ -1,0 +1,49 @@
+# Python environments and caches
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# Build, packaging, and coverage output
+build/
+dist/
+*.egg-info/
+.coverage
+.coverage.*
+htmlcov/
+
+# Local credentials and configuration
+.env
+.env.*
+!.env.example
+!.env.sample
+.pgpass
+pgpass.conf
+*.pem
+*.key
+
+# Downloaded datasets and generated database files
+/data/raw/*
+!/data/raw/.gitkeep
+/data/processed/
+*.db
+*.sqlite
+*.sqlite3
+*.sql.dump
+*.dump
+
+# Local tooling and operating-system files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.log
+*.tmp
+*.swp
+~$*
