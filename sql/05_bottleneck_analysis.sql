@@ -1,7 +1,4 @@
 
--- SupplyFlow: Logistics bottleneck analysis
--- Compare fulfillment and transit durations.
-
 WITH lifecycle AS (
     SELECT
         o.order_id,
@@ -10,7 +7,7 @@ WITH lifecycle AS (
 
         EXTRACT(EPOCH FROM (
             o.order_delivered_carrier_date
-            - o.order_approved_at
+            - o.order_approved_at::timestamp
         )) / 86400.0 AS fulfillment_days,
 
         EXTRACT(EPOCH FROM (
@@ -19,17 +16,11 @@ WITH lifecycle AS (
         )) / 86400.0 AS transit_days
 
     FROM raw.orders o
+
     JOIN analytics.order_performance p
         ON o.order_id = p.order_id
 
     WHERE p.is_delivery_eligible
-),
-
-valid_lifecycle AS (
-    SELECT *
-    FROM lifecycle
-    WHERE fulfillment_days >= 0
-      AND transit_days >= 0
 )
 
 SELECT
@@ -48,7 +39,10 @@ SELECT
         AVG(transit_days)::numeric, 2
     ) AS avg_transit_days
 
-FROM valid_lifecycle
+FROM lifecycle
+
+WHERE fulfillment_days >= 0
+  AND transit_days >= 0
 
 GROUP BY is_late
 ORDER BY is_late;
