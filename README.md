@@ -26,6 +26,15 @@ The saved dashboard snapshot shows:
 
 The snapshot also shows longer average transit time for late deliveries (25.68 days) than for on-time deliveries (7.91 days). This suggests carrier transit deserves further investigation; the comparison alone does not establish the cause of delays. Values depend on the report's filters and refresh state.
 
+## Key findings
+
+- **8.11% of 96,470 eligible deliveries arrived late** (7,826 orders).
+- **Transit deserves closer investigation:** mean transit time was 25.68 days for late orders versus 7.91 days for on-time orders in the valid-lifecycle population.
+- **Geographic rate and volume tell different stories:** São Paulo and Rio de Janeiro accounted for 51.76% of late orders, while smaller states had higher late rates.
+- **Low ratings were more common among reviewed late orders:** 54.07% versus 9.22% for on-time orders. This association does not establish causation.
+
+Read the [full analysis and recommendations](docs/analysis_report.md) for evidence, population definitions, limitations and proposed operational follow-up.
+
 ## Tools and workflow
 
 **Python** (`pandas`, `SQLAlchemy`, `psycopg2`) handles exploration, validation, and loading. **PostgreSQL** stores the source tables and analytical views. **Power BI Desktop** provides the report.
@@ -49,6 +58,8 @@ supplyflow/
 │   └── SupplyFlow_Operations_Analytics.pbix
 ├── data/
 │   └── raw/                         # Downloaded CSV files; ignored by Git
+├── docs/
+│   └── analysis_report.md           # Findings and operational recommendations
 ├── sql/
 │   ├── 01_order_performance.sql     # Order-level analytical view
 │   ├── 02_data_validation.sql       # Order grain and delivery checks
