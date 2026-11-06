@@ -14,7 +14,8 @@ Three findings guide the recommended investigation:
 
 **Recommended decision:** commission a focused review of persistent delays in high-volume regions and high-rate smaller regions. Validate operational explanations before selecting a service intervention. The analysis supports investigation priorities; it does not identify a responsible carrier or quantify achievable savings.
 
-## Scope and measurement
+<details>
+<summary><strong>Scope, population and metric definitions</strong></summary>
 
 The source contains 99,441 orders. Delivery-performance analysis includes the **96,470 orders** marked `delivered` with both actual and estimated delivery timestamps available. Their purchase timestamps span **15 September 2016 to 29 August 2018**. This is historical analysis, not a measurement of present-day Olist performance.
 
@@ -30,13 +31,14 @@ The source contains 99,441 orders. Delivery-performance analysis includes the **
 
 The analytical grain is one row per order. The source order and customer identifiers were checked for uniqueness when reproducing the results. Review records were reduced to one per order before aggregation.
 
+
+</details>
+
 ## Finding 1: Approximately eight in every 100 eligible deliveries arrived late
 
-**Evidence.** There were 7,826 late deliveries among 96,470 eligible orders:
+![Delivery status: 91.89% on time and 8.11% late across 96,470 eligible deliveries.](images/01_delivery_reliability.png)
 
-`7,826 / 96,470 × 100 = 8.11%`
-
-The remaining 88,644 eligible orders arrived on or before the estimated timestamp. Average delivery time across eligible orders was 12.56 days.
+**Evidence.** Of 96,470 eligible orders, 7,826 were late and 88,644 were on time. Mean delivery time was 12.56 days.
 
 **Implication.** This establishes a baseline for delivery reliability. It separates overall delivery speed from the ability to meet the promise communicated to the customer: an order can take a long time and still arrive on time if its estimate allows for that duration.
 
@@ -46,12 +48,19 @@ The remaining 88,644 eligible orders arrived on or before the estimated timestam
 
 ## Finding 2: Transit is the first stage to investigate, with fulfillment also contributing to longer delivery times
 
+![Mean fulfillment and transit days for late and on-time deliveries, restricted to valid lifecycle records.](images/02_lifecycle_comparison.png)
+
 **Evidence.** The lifecycle comparison retains 95,082 eligible orders with nonnegative, nonmissing fulfillment and transit durations: 87,290 on-time orders and 7,792 late orders. The remaining 1,388 eligible orders are excluded from this comparison.
+
+<details>
+<summary>View lifecycle figures</summary>
 
 | Delivery stage | On-time orders: mean days | Late orders: mean days | Difference, late minus on time |
 | --- | ---: | ---: | ---: |
 | Fulfillment | 2.63 | 5.35 | 2.72 days |
 | Transit | 7.91 | 25.68 | 17.77 days |
+
+</details>
 
 Differences are calculated from unrounded means and displayed to two decimals.
 
@@ -63,7 +72,12 @@ Differences are calculated from unrounded means and displayed to two decimals.
 
 ## Finding 3: High late rates and high late-order volumes point to different geographic priorities
 
+![Selected states compared by late-order count and late-delivery rate, with an overall rate reference.](images/03_geographic_priorities.png)
+
 **Evidence.** State-level aggregation uses the same eligible-order population as the overall late rate.
+
+<details>
+<summary>View regional figures and eligible-order counts</summary>
 
 | Customer state | Eligible orders | Late orders | Late-delivery rate |
 | --- | ---: | ---: | ---: |
@@ -71,6 +85,8 @@ Differences are calculated from unrounded means and displayed to two decimals.
 | Rio de Janeiro (RJ) | 12,350 | 1,664 | 13.47% |
 | Alagoas (AL) | 397 | 95 | 23.93% |
 | Maranhão (MA) | 717 | 141 | 19.67% |
+
+</details>
 
 São Paulo and Rio de Janeiro together account for **4,051 / 7,826 = 51.76%** of all late orders. Alagoas has the highest state late rate, but its 95 late orders represent a much smaller absolute volume.
 
@@ -82,12 +98,19 @@ São Paulo and Rio de Janeiro together account for **4,051 / 7,826 = 51.76%** of
 
 ## Finding 4: Late orders are associated with substantially worse customer ratings
 
+![Low-rating rates of 9.22% for reviewed on-time deliveries and 54.07% for reviewed late deliveries.](images/04_customer_ratings.png)
+
 **Evidence.** Review comparisons include only eligible orders with an available selected review: 95,824 orders in total. Missing reviews are excluded rather than treated as positive, negative or zero-rated responses.
+
+<details>
+<summary>View review counts and average scores</summary>
 
 | Delivery status | Orders with a review | Mean review score | Low-rating rate: scores 1–2 |
 | --- | ---: | ---: | ---: |
 | On time | 88,163 | 4.29 | 9.22% |
 | Late | 7,661 | 2.57 | 54.07% |
+
+</details>
 
 The low-rating rate is **44.84 percentage points higher** among reviewed late orders, calculated from unrounded rates. The overall mean review score for reviewed eligible deliveries is 4.16.
 
@@ -109,13 +132,16 @@ The low-rating rate is **44.84 percentage points higher** among reviewed late or
 
 The immediate task is to decide **where to investigate and what additional evidence to collect**. Operational changes, financial benefits and causal conclusions require further evidence.
 
-## Reproducibility and interpretation notes
+<details>
+<summary><strong>Reproducibility and interpretation notes</strong></summary>
 
 - Figures were recomputed from the local source CSVs using the eligibility, review-selection and lifecycle rules in the SQL. The existing database and Power BI workbook were not refreshed for this report.
 - The report's lifecycle comparison requires both stages to be valid, matching the bottleneck-analysis SQL. The dashboard reporting view validates each stage independently. Stage means can therefore differ when populations or filters differ.
 - The SQL lateness rule compares full timestamps. An estimated date stored at midnight is treated as that timestamp; the analysis does not independently establish the business's intended end-of-day promise convention.
 - Averages can conceal outliers. The recommended follow-up should include distributions and segment counts.
 - No causal effects, intervention outcomes or financial savings are estimated.
+
+</details>
 
 ## Supporting material
 
